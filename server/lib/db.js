@@ -142,6 +142,7 @@ function deleteById(id) {
 /*
   This module exports the following functions
 */
+
 exports.insert = insert;
 exports.findAll = findAll;
 exports.findById = findById;
