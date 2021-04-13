@@ -21,7 +21,15 @@ app.get("/", (req, res) => {
   res.json({
     "/posts": "read and create new posts",
     "/posts/:id": "read, update and delete an individual post",
+    "second-post": "hello from the other side",
+    "another-post": "Hello from VSC",
   });
+});
+
+// this brings stuff from Postman into the Terminal here, then we tell the handler to put it somewhere and then use a frontend to render it in react!
+
+app.post("/users", (req, res) => {
+  console.log(req.body);
 });
 
 /*
