@@ -17,15 +17,27 @@ app.use(express.json());
 /*
   Endpoint to handle GET requests to the root URI "/"
 */
+
 app.get("/posts", (req, res) => {
+  // inside this i write my code to what is expected by the endpoint
+  res.status(200);
+  res.json({
+    hello: "from the new json object",
+  });
+});
+
+app.get("/posts/all", (req, res) => {
   db.findAll()
     .then((posts) => {
       res.status(200);
-      res.json(posts);
+      console.log(posts); // see object in terminal
+      res.json(posts); // see object in Postman
     })
     .catch((error) => {
       res.status(500);
-      res.send();
+      res.json({
+        error: `Internal Server Error: ${error}`,
+      });
     });
 });
 
@@ -37,6 +49,8 @@ app.post("/users", (req, res) => {
     hello: "world", //sending something back
   });
 });
+
+//
 
 /*
   We have to start the server. We make it listen on the port 4000
