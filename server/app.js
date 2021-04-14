@@ -18,31 +18,7 @@ app.use(express.json());
   Endpoint to handle GET requests to the root URI "/"
 */
 
-// app.get("/posts", (req, res) => {
-//   // inside this i write my code to what is expected by the endpoint
-//   res.status(200);
-//   res.json({
-//     hello: "from the new json object",
-//   });
-// });
-
-app.get("/posts/all", (req, res) => {
-  db.findAll()
-    .then((posts) => {
-      res.status(200);
-      console.log(posts); // get object in terminal
-      res.json(posts); // see object in Postman
-    })
-    .catch((error) => {
-      res.status(500);
-      res.json({
-        error: `Internal Server Error: ${error}`,
-      });
-    });
-});
-
-// this brings stuff from Postman into the Terminal here, then we tell the handler to put it somewhere and then use a frontend to render it in react!
-
+// Create User
 app.post("/users", (req, res) => {
   // listening to requests with a POST method for /users
 
@@ -52,10 +28,11 @@ app.post("/users", (req, res) => {
   });
 });
 
+// Insert JSON Post Props
 app.post("/posts", (req, res) => {
   // listening to requests with a POST method for /posts
-
-  db.insert(req.body) // insert someting from the Postman body into the db.json object here in VSC
+  db.insert({ title: req.body.title, body: req.body.title }) // insert someting from the Postman body into the db.json object here in VSC
+    // insert properties from Postman JSON to the JSON VSC Object
     .then((posts) => {
       console.log(posts);
       res.json(posts); // to see the info we got from Postman, in Postmans Body Response
@@ -66,10 +43,55 @@ app.post("/posts", (req, res) => {
     });
 });
 
-// get posts id
+// get posts id handler - Read Post ID
+//        posts/1 for example
 app.get("/posts/:id", (req, res) => {
+  //the param is the url ending in an id in Postman
+  const { id } = req.params; // destructuring
+
+  db.findById(id)
+    .then((post) => {
+      if (post === undefined) {
+        res.status(404);
+        res.json({ error: `Post with id ${id} not found.` });
+      } else {
+        res.status(200);
+        res.json(post);
+      }
+    })
+    .catch((error) => {
+      res.status(500);
+      res.json({
+        error: "Internal Server Error",
+      });
+    });
+
+  // res.status(200);
+  // res.json(id);
+
+  // :id is a params placeholder for whatever we'll pass, keep it meaningful.
   // inside this i write my code to what is expected by the endpoint
-  db.findById(req.params.id)
+  // db.findById(req.params.id)
+  //   .then((posts) => {
+  //     res.status(200);
+  //     console.log(posts); // get object in terminal
+  //     res.json(posts); // see object in Postman
+  //   })
+  //   .catch((error) => {
+  //     res.status(404);
+  //     res.json({
+  //       error: `Not Found: ${error}`,
+  //     });
+  //   });
+});
+
+// patch an id handler
+// Patch Posts
+app.patch("/posts/:id", (req, res) => {
+  // inside this i write my code to what is expected by the endpoint
+
+  db.updateById(req.params.id, req.body)
+    // first argument targets id, second targets the body of the object
     .then((posts) => {
       res.status(200);
       console.log(posts); // get object in terminal
