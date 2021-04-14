@@ -21,6 +21,7 @@ app.use(express.json());
 // Create User
 app.post("/users", (req, res) => {
   // listening to requests with a POST method for /users
+
   db.insert(req.body);
   console.log(req.body); // request the body of the object into terminal
   res.json({
@@ -31,16 +32,22 @@ app.post("/users", (req, res) => {
 // Insert JSON Post Props
 app.post("/posts", (req, res) => {
   // listening to requests with a POST method for /posts
-  db.insert({ title: req.body.title, body: req.body.title }) // insert someting from the Postman body into the db.json object here in VSC
-    // insert properties from Postman JSON to the JSON VSC Object
-    .then((posts) => {
-      console.log(posts);
-      res.json(posts); // to see the info we got from Postman, in Postmans Body Response
-      res.status(201);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  if (!req.body.title && !req.body.body) {
+    // validating that the title and body is made
+    res.status(400);
+    res.json({ error: "You have to make a title and body, dummy!" });
+  } else {
+    db.insert({ title: req.body.title, body: req.body.title }) // insert someting from the Postman body into the db.json object here in VSC
+      // insert properties from Postman JSON to the JSON VSC Object
+      .then((posts) => {
+        console.log(posts);
+        res.json(posts); // to see the info we got from Postman, in Postmans Body Response
+        res.status(201);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 });
 
 // get posts id handler - Read Post ID
@@ -108,6 +115,7 @@ app.patch("/posts/:id", (req, res) => {
 // Delete Posts
 app.delete("/posts/:id", (req, res) => {
   const { id } = req.params;
+
   db.deleteById(id).then(() => {
     res.status(204);
     console.log("deleted successfully");
