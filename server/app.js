@@ -21,10 +21,10 @@ app.use(express.json());
 // Create User
 app.post("/users", (req, res) => {
   // listening to requests with a POST method for /users
-
+  db.insert(req.body);
   console.log(req.body); // request the body of the object into terminal
   res.json({
-    hello: "world", //sending something back
+    message: "completed", //sending something back
   });
 });
 
@@ -91,7 +91,7 @@ app.patch("/posts/:id", (req, res) => {
   // inside this i write my code to what is expected by the endpoint
 
   db.updateById(req.params.id, req.body)
-    // first argument targets id, second targets the body of the object
+    // first argument targets id parameter of the request, second targets the body of the object
     .then((posts) => {
       res.status(200);
       console.log(posts); // get object in terminal
@@ -103,6 +103,15 @@ app.patch("/posts/:id", (req, res) => {
         error: `Not Found: ${error}`,
       });
     });
+});
+
+// Delete Posts
+app.delete("/posts/:id", (req, res) => {
+  const { id } = req.params;
+  db.deleteById(id).then(() => {
+    res.status(204);
+    console.log("deleted successfully");
+  });
 });
 
 /*
