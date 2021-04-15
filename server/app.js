@@ -2,20 +2,27 @@ const express = require("express");
 const db = require("./lib/db");
 const cors = require("cors");
 
+const mongoose = require("mongoose");
+const Post = require("./models/post");
+const app = express();
+
 /*
   We create an express app calling
   the express function.
 */
-const app = express();
-app.use(cors());
 
 /*
-  We setup middleware to:
-  - parse the body of the request to json for us
-  https://expressjs.com/en/guide/using-middleware.html
+We setup middleware to:
+- parse the body of the request to json for us
+https://expressjs.com/en/guide/using-middleware.html
 */
 app.use(express.json());
-
+app.use(cors());
+app.use((req, res, next) => {
+  const { method, url } = req;
+  console.log(`${method} ${url}`);
+  next();
+});
 /*
   Endpoint to handle GET requests to the root URI "/"
 */
@@ -39,7 +46,7 @@ app.post("/posts", (req, res) => {
     res.status(400);
     res.json({ error: "You have to make a title and body, dummy!" });
   } else {
-    db.insert({ title: req.body.title, body: req.body.title }) // insert someting from the Postman body into the db.json object here in VSC
+    Post.create({ title: req.body.title, body: req.body.title }) // insert someting from the Postman body into the db.json object here in VSC
       // insert properties from Postman JSON to the JSON VSC Object
       .then((posts) => {
         console.log(posts);
@@ -58,7 +65,7 @@ app.get("/posts/:id", (req, res) => {
   //the param is the url ending in an id in Postman
   const { id } = req.params; // destructuring
 
-  db.findById(id)
+  Post.findById(id)
     .then((post) => {
       if (post === undefined) {
         res.status(404);
@@ -99,7 +106,7 @@ app.get("/posts/:id", (req, res) => {
 app.patch("/posts/:id", (req, res) => {
   // inside this i write my code to what is expected by the endpoint
 
-  db.updateById(req.params.id, req.body)
+Post.findByIdAndUpdate(req.params.id, req.body)
     // first argument targets id parameter of the request, second targets the body of the object
     .then((posts) => {
       res.status(200);
@@ -118,8 +125,9 @@ app.patch("/posts/:id", (req, res) => {
 app.delete("/posts/:id", (req, res) => {
   const { id } = req.params;
 
-  db.deleteById(id).then(() => {
+  Post.findByIdAndDelete(id).then(() => {
     res.status(204);
+    res.json("deleted!");
     console.log("deleted successfully");
   });
 });
@@ -128,6 +136,21 @@ app.delete("/posts/:id", (req, res) => {
   We have to start the server. We make it listen on the port 4000
 
 */
-app.listen(4000, () => {
-  console.log("Listening on http://localhost:4000");
+
+/*
+  We have to start the server. We make it listen on the port 4000
+*/
+
+// localhost = 127.0.0.1
+mongoose.connect("mongodb://localhost/blogs", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const mongodb = mongoose.connection;
+
+mongodb.on("open", () => {
+  app.listen(4000, () => {
+    console.log("Listening on http://localhost:4000");
+  });
 });
