@@ -59,7 +59,7 @@ app.post("/users", (req, res) => {
 app.post("/posts", (req, res) => {
   const { body, title } = req.body;
   // listening to requests with a POST method for /posts
-  if (!title || !body) {
+  if (!title && !body) {
     // validating that the title and body is made
     res.status(400);
     res.json({ error: "You have to make a title and body, dummy!" });
