@@ -28,6 +28,18 @@ app.use((req, res, next) => {
   Endpoint to handle GET requests to the root URI "/"
 */
 
+app.get("/posts", (req, res) => {
+  Post.find()
+    .then((posts) => {
+      res.status(200);
+      res.json(posts);
+    })
+    .catch((error) => {
+      res.status(404);
+      res.json({ error: `Not posts found.` });
+    });
+});
+
 // Create User
 app.post("/users", (req, res) => {
   // listening to requests with a POST method for /users
