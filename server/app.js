@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const db = require("./lib/db");
 const cors = require("cors");
@@ -106,7 +107,7 @@ app.get("/posts/:id", (req, res) => {
 app.patch("/posts/:id", (req, res) => {
   // inside this i write my code to what is expected by the endpoint
 
-Post.findByIdAndUpdate(req.params.id, req.body)
+  Post.findByIdAndUpdate(req.params.id, req.body)
     // first argument targets id parameter of the request, second targets the body of the object
     .then((posts) => {
       res.status(200);
@@ -140,7 +141,12 @@ app.delete("/posts/:id", (req, res) => {
 /*
   We have to start the server. We make it listen on the port 4000
 */
+const { PORT } = process.env;
 
+// {
+//   USER: "hughburgess",
+//   COMMAND_MODE: "unix2003"
+// }
 // localhost = 127.0.0.1
 mongoose.connect("mongodb://localhost/blogs", {
   useNewUrlParser: true,
@@ -150,7 +156,7 @@ mongoose.connect("mongodb://localhost/blogs", {
 const mongodb = mongoose.connection;
 
 mongodb.on("open", () => {
-  app.listen(4000, () => {
+  app.listen(PORT, () => {
     console.log("Listening on http://localhost:4000");
   });
 });
