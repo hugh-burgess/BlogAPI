@@ -31,8 +31,12 @@ app.use((req, res, next) => {
 app.get("/posts", (req, res) => {
   Post.find()
     .then((posts) => {
-      res.status(200);
-      res.json(posts);
+      if (posts) {
+        res.status(200);
+        res.json(posts);
+      } else {
+        res.json({ error: `No posts yet!` });
+      }
     })
     .catch((error) => {
       res.status(404);
