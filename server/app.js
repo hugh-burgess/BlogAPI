@@ -57,13 +57,14 @@ app.post("/users", (req, res) => {
 
 // Insert JSON Post Props
 app.post("/posts", (req, res) => {
+  const { body, title } = req.body;
   // listening to requests with a POST method for /posts
-  if (!req.body.title && !req.body.body) {
+  if (!title && !body) {
     // validating that the title and body is made
     res.status(400);
     res.json({ error: "You have to make a title and body, dummy!" });
   } else {
-    Post.create({ title: req.body.title, body: req.body.title }) // insert someting from the Postman body into the db.json object here in VSC
+    Post.create({ title: title, body: body }) // insert someting from the Postman body into the db.json object here in VSC
       // insert properties from Postman JSON to the JSON VSC Object
       .then((posts) => {
         console.log(posts);
