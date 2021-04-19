@@ -141,22 +141,23 @@ app.delete("/posts/:id", (req, res) => {
 /*
   We have to start the server. We make it listen on the port 4000
 */
-const { PORT } = process.env;
+const { PORT, MONGO_URL } = process.env; // used on line 151 and 159
 
 // {
 //   USER: "hughburgess",
 //   COMMAND_MODE: "unix2003"
 // }
-// localhost = 127.0.0.1
-mongoose.connect("mongodb://localhost/blogs", {
+
+// localhost is 127.0.0.1 by definition
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+// console.log(MONGO_URL); this shows mongodb://localhost/blogs in the terminal
 const mongodb = mongoose.connection;
 
 mongodb.on("open", () => {
   app.listen(PORT, () => {
-    console.log("Listening on http://localhost:4000");
+    console.log(`Listening on port ${PORT}`);
   });
 });
